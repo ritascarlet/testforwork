@@ -61,3 +61,17 @@ rm -rf /etc/sing-box/config.json
 
 # 5. Обновление пакетов openwrt 
 opkg update 
+
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo "-----------------------------------"
+echo -e "\e[32mWEST router has been updated! Thanks for waiting\e[0m"
+echo "-----------------------------------"
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
