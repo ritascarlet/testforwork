@@ -1,5 +1,20 @@
 #!/bin/sh
 
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo "-----------------------------------"
+echo -e "\e[32mОбновление роутера WEST\e[0m"
+echo "-----------------------------------"
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+
+
 # 1. Создать скрипт для автоматического получения конфига
 cat > /etc/hotplug.d/iface/40-getvpnconfig << EOF
 #!/bin/sh
@@ -43,3 +58,6 @@ rm -rf /etc/sing-box/config.json
 
 # 5. Запустить скрипт 40-getvpnconfig
 /etc/hotplug.d/iface/40-getvpnconfig
+
+# 5. Обновление пакетов openwrt 
+opkg update 
