@@ -75,3 +75,13 @@ echo ""
 echo ""
 echo ""
 echo ""
+echo "-----------------------------------"
+echo -e "\e[32mThe router will reboot\e[0m"
+echo "-----------------------------------"
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+
+reboot
