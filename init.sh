@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /tmp
+
 wget http://192.168.31.111:8000/openwrt-init.ubi
 
 ubiformat /dev/mtd9 -y -f /tmp/openwrt-init.ubi
