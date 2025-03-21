@@ -14,48 +14,64 @@ echo ""
 echo ""
 echo ""
 
-# 1. Создать скрипт для автоматического получения конфига
+# 1. Созда b l  aк `ип b дл o ав bома bи gе aкого пол c gени o кон dига
 cat > /etc/init.d/getdomains << EOF
 #!/bin/sh /etc/rc.common
 
 START=99
 
 start () {
-    VPN_NOT_WOKRING=$(sing-box -c /etc/sing-box/config.json tools fetch instagram.com 2>&1 | grep FATAL)
-    if [ -z "${VPN_NOT_WOKRING}" ]
+    echo "Checking sing-box status..."
+    VPN_NOT_WOKRING=\$(sing-box -c /etc/sing-box/config.json tools fetch instagram.com 2>&1 | grep FATAL)
+    if [ -z "\${VPN_NOT_WOKRING}" ]
     then
-        # WITHOUT YOUTUBE
-        DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains/main/Russia/inside-dnsmasq-nfset.lst
-    else
-        # WITH YOUTUBE
+
         DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains-no-youtube/main/Russia/inside-dnsmasq-nfset.lst
+    else
+
+        DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains/main/Russia/inside-dnsmasq-nfset.lst
     fi
 
     count=0
-    while true; do
+    max_retries=5
+    while [ \$count -lt \$max_retries ]; do
         if curl -m 3 github.com; then
-            curl -f $DOMAINS --output /tmp/dnsmasq.d/domains.lst
+            echo "GitHub is available, downloading domains list..."
+            curl -f \$DOMAINS --output /tmp/dnsmasq.d/domains.lst
             break
         else
-            echo "GitHub is not available. Check the internet availability [$count]"
-            count=$((count+1))
+            echo "GitHub is not available. Check the internet availability [\$count]"
+            count=\$((count+1))
+            sleep 5
         fi
     done
 
+    if [ \$count -eq \$max_retries ]; then
+        echo "Failed to connect to GitHub after \$max_retries attempts. Exiting."
+        exit 1
+    fi
+
+    echo "Checking dnsmasq configuration..."
     if dnsmasq --conf-file=/tmp/dnsmasq.d/domains.lst --test 2>&1 | grep -q "syntax check OK"; then
+        echo "dnsmasq configuration is OK, restarting dnsmasq..."
         /etc/init.d/dnsmasq restart
+    else
+        echo "dnsmasq configuration contains errors. Please check the domains.lst file."
+        exit 1
     fi
 }
 
 EOF
 
-# Даем права на выполнение
+#  tаем п `ава на в kполнение
 chmod +x /etc/init.d/getdomains
 
-# Обновляем пакеты
+#  ~бновл oем паке b k
+echo "Updating packages..."
 opkg update
 
-# Скачиваем и устанавливаем пакеты
+# Ска gиваем и  c a bанавливаем паке b k
+echo "Downloading and installing zapret..."
 wget -O /tmp/zapret.ipk https://raw.githubusercontent.com/ritascarlet/testforwork/main/zapret_70.20250213_aarch64_cortex-a53.ipk
 wget -O /tmp/luciapp.ipk https://raw.githubusercontent.com/ritascarlet/testforwork/main/luci-app-zapret_70.20250213_all.ipk
 
@@ -73,14 +89,15 @@ else
     exit 1
 fi
 
-# Удаляем временные файлы
+# Удал oем в `еменн kе  dайл k
 rm /tmp/zapret.ipk
 rm /tmp/luciapp.ipk
 
-# Запускаем getdomains
+#  wап c aкаем getdomains
+echo "Starting getdomains..."
 /etc/init.d/getdomains start
 
-# Добавляем в автозагрузку
+#  tобавл oем в ав bозаг ` cзк c
 /etc/init.d/getdomains enable
 
 echo ""
@@ -91,7 +108,6 @@ echo ""
 echo "-----------------------------------"
 echo -e "\e[32mDone!!!\e[0m"
 echo "-----------------------------------"
-echo ""
 echo ""
 echo ""
 echo ""
