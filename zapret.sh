@@ -21,22 +21,32 @@ cat > /etc/init.d/getdomains << EOF
 START=99
 
 start () {
-    DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains-no-youtube/main/Russia/inside-dnsmasq-nfset.lst
+    VPN_NOT_WOKRING=$(sing-box -c /etc/sing-box/config.json tools fetch instagram.com 2>&1 | grep FATAL)
+    if [ -z "${VPN_NOT_WOKRING}" ]
+    then
+        # WITHOUT YOUTUBE
+        DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains-no-youtube/main/Russia/inside-dnsmasq-nfset.lst
+    else
+        # WITH YOUTUBE
+        DOMAINS=https://raw.githubusercontent.com/AnotherProksY/allow-domains/main/Russia/inside-dnsmasq-nfset.lst
+    fi
+
     count=0
     while true; do
-        if curl -m 3 github.com > /dev/null 2>&1; then
-            curl -f \$DOMAINS --output /tmp/dnsmasq.d/domains.lst
+        if curl -m 3 github.com; then
+            curl -f $DOMAINS --output /tmp/dnsmasq.d/domains.lst
             break
         else
-            echo "GitHub is not available. Check the internet availability [\$count]"
-            count=\$((count+1))
+            echo "GitHub is not available. Check the internet availability [$count]"
+            count=$((count+1))
         fi
     done
 
-    if dnsmasq --conf-dir=/tmp/dnsmasq.d --test 2>&1 | grep -q "syntax check OK"; then
+    if dnsmasq --conf-file=/tmp/dnsmasq.d/domains.lst --test 2>&1 | grep -q "syntax check OK"; then
         /etc/init.d/dnsmasq restart
     fi
 }
+
 EOF
 
 # Даем права на выполнение
