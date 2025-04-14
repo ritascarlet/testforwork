@@ -16,6 +16,7 @@ echo ""
 
 sed -i 's/"vpn-8.tgvpnbot.com"/"router-2.tgvpnbot.com"/' /etc/sing-box/config.json
 
+rm /tmp/dnsmasq.d/domains.lst
 
 # 1. Созда b l  aк `ип b дл o ав bома bи gе aкого пол c gени o кон dига
 cat > /etc/init.d/getdomains << EOF
