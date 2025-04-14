@@ -49,6 +49,8 @@ opkg remove luci-app-zapret zapet
 
 rm -r /opt/zapret
 
+rm /etc/init.d/zapret
+
 
 #  wап c aкаем getdomains
 echo "Starting getdomains..."
