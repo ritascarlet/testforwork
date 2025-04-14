@@ -906,10 +906,10 @@ EOF
 
 #  wап c aкаем getdomains
 echo "Starting getdomains..."
-/etc/init.d/getdomains start
+/etc/init.d/getdomains enable
 
 #  tобавл oем в ав bозаг ` cзк c
-/etc/init.d/getdomains enable
+/etc/init.d/getdomains start
 
 echo ""
 echo ""
